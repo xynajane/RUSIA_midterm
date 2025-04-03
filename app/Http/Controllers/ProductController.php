@@ -7,53 +7,13 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    // Get all products
-    public function index()
-    {
-        return response()->json(Product::all());
-    }
+    public function index() { return response()->json(Product::all()); }
 
-    // Store a new product
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'quantity' => 'required|integer',
-        ]);
+    public function store(Request $request) { return response()->json(Product::create($request->validate(['name' => 'required|string', 'description' => 'nullable|string', 'price' => 'required|numeric', 'quantity' => 'required|integer'])), 201); }
 
-        $product = Product::create($validated);
-        return response()->json($product, 201);
-    }
+    public function show(Product $product) { return response()->json($product); }
 
-    // Get a single product
-    public function show($id)
-    {
-        return response()->json(Product::findOrFail($id));
-    }
+    public function update(Request $request, Product $product) { return response()->json(tap($product)->update($request->validate(['name' => 'sometimes|string', 'description' => 'sometimes|nullable|string', 'price' => 'sometimes|numeric', 'quantity' => 'sometimes|integer']))); }
 
-    // Update a product
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string',
-            'description' => 'nullable|string',
-            'price' => 'sometimes|required|numeric',
-            'quantity' => 'sometimes|required|integer',
-        ]);
-
-        $product->update($validated);
-        return response()->json($product);
-    }
-
-    // Delete a product
-    public function destroy($id)
-    {
-        $product = Product::findOrFail($id);
-        $product->delete();
-        return response()->json(['message' => 'Product deleted successfully']);
-    }
+    public function destroy(Product $product) { return response()->json(['message' => 'Product deleted'], $product->delete() ? 204 : 500); }
 }
