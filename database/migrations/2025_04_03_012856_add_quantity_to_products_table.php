@@ -8,9 +8,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            if (!Schema::hasColumn('products', 'quantity')) {
-                $table->integer('quantity')->default(0);
-            }
+            $table->integer('quantity')->default(0); // required, default value 0
         });
     }
 
